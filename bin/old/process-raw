@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Usage & Flags
+usage() {
+    echo "Usage: process-raw [-rb/--remove-banner] [RAW_CORPUS_FILE]"
+    exit 1
+}
+
+OPTIND=1
+while getopts 'df' opt; do
+  case $opt in
+    rb) dir=$OPTARG      ;;
+    f) format=$OPTARG   ;;
+    *) echo 'error' >&2
+       exit 1
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+[ $# -gt 1 ] && usage
+
+# Redirect to stdin if no file specified
+[ $# -eq 1 ] && cat "$1" > /dev/stdin
+
+# Remove banner
+[[ $REMOVE_BANNER ]] && tail -
+
+# # Remove newlines
+# tr -d '\n'
+
+# # Add buffer control seq.s
+# perl -pe 's/<esc>.*?\K([iAaoO])/\1<wbf>/g'

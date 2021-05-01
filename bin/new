@@ -1,0 +1,14 @@
+#!/bin/sh
+
+sul=/config/utils/bin
+
+usage() {
+    echo "Usage: new [FLAGS]"
+
+    exit 1
+}
+
+FLAGS="${1:-nil}"
+
+streamc=/home/dincio/code/streamc/build/streamc
+stdbuf -o0 -e0 $streamc | tee "$($sul/next-name -fp /home/dincio/corpi "{}.$FLAGS.txt")"

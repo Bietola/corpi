@@ -1,0 +1,50 @@
+#!/usr/bin/env stack
+{- stack script
+    --resolver lts-17.10
+    --package turtle
+    --package text
+    --package monadlist
+    --package foldl
+-}
+
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE OverloadedStrings #-}
+
+import Prelude hiding (tail, head)
+import qualified Data.List as L
+import Control.Monad.ListM
+import qualified Control.Foldl as Fl
+import qualified Data.Text as T
+import qualified Data.Text.IO as T
+import Turtle
+
+(\x -> T.concat ["<S-", x, ">"])
+    <$_> "<s-" <*> selfless $ star dot <*_> ">"
+
+"<s-" >>> (selfless $ star dot) >=> ">"
+    >>> (return $ "<S-" ++ <_> ++ ">")
+
+fs <-> xs =  <*>
+
+tail n shl =
+    drop n <$> reduce Fl.list shl >>= select
+
+bannerLength = 17
+
+main = view $ let
+    -- Remove Banner
+    --nobanner = drop bannerLength <$> reduce Fl.list stdin
+
+    -- Remove newlines
+    -- oneline = mconcat <$> nobanner
+    thing = undefined
+
+    -- Add buffer control seq.s
+    -- in flip sed oneline $ do
+    --     "<s-"
+    --     r <- selfless $ star dot
+    --     ">"
+    --     return $ T.concat ["<SHIFT-", r, ">"]
+    -- TODO/CC: Create magic operator to use applicatives to
+    --          simulate regex captures
+    in return $ 2 <-> 2
