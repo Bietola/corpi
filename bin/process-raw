@@ -5,46 +5,42 @@
     --package text
     --package monadlist
     --package foldl
+    --package lens-regex-pcre
+    --package lens
 -}
 
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+
 
 import Prelude hiding (tail, head)
 import qualified Data.List as L
-import Control.Monad.ListM
+import Data.Functor
+import Control.Lens.Operators
+import qualified Control.Lens.Regex.Text as R
+import Control.Lens.Regex.Text (regex)
 import qualified Control.Foldl as Fl
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
-import Turtle
 
-(\x -> T.concat ["<S-", x, ">"])
-    <$_> "<s-" <*> selfless $ star dot <*_> ">"
-
-"<s-" >>> (selfless $ star dot) >=> ">"
-    >>> (return $ "<S-" ++ <_> ++ ">")
-
-fs <-> xs =  <*>
+import Turtle hiding ((<&>), match)
+import qualified Turtle.Pattern as ShP
 
 tail n shl =
-    drop n <$> reduce Fl.list shl >>= select
+    reduce Fl.list shl >>= select . drop n
 
 bannerLength = 17
 
 main = view $ let
     -- Remove Banner
-    --nobanner = drop bannerLength <$> reduce Fl.list stdin
+    nobanner = drop bannerLength <$> reduce Fl.list stdin
 
     -- Remove newlines
-    -- oneline = mconcat <$> nobanner
-    thing = undefined
+    -- oneline = return @Shell "<esc>dfgxajdhei<esc>hsAjk"
+    oneline = lineToText . mconcat <$> nobanner
 
     -- Add buffer control seq.s
-    -- in flip sed oneline $ do
-    --     "<s-"
-    --     r <- selfless $ star dot
-    --     ">"
-    --     return $ T.concat ["<SHIFT-", r, ">"]
-    -- TODO/CC: Create magic operator to use applicatives to
-    --          simulate regex captures
-    in return $ 2 <-> 2
+    -- in has [regex|whisk|] . match "whiskers on kittens"
+    -- in return ("<s-A><s-d><c-d>jdiso<esc><s-d>" & [regex|<(s)-.*?>|] . R.group 0 .~ "SHIFT")
+    in oneline <&> [regex|<esc>.*?[iIaAoO]|] . R.match <>~ "<wbf>"
