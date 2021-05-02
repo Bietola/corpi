@@ -37,10 +37,7 @@ main = view $ let
     nobanner = drop bannerLength <$> reduce Fl.list stdin
 
     -- Remove newlines
-    -- oneline = return @Shell "<esc>dfgxajdhei<esc>hsAjk"
     oneline = lineToText . mconcat <$> nobanner
 
     -- Add buffer control seq.s
-    -- in has [regex|whisk|] . match "whiskers on kittens"
-    -- in return ("<s-A><s-d><c-d>jdiso<esc><s-d>" & [regex|<(s)-.*?>|] . R.group 0 .~ "SHIFT")
     in oneline <&> [regex|<esc>.*?[iIaAoO]|] . R.match <>~ "<wbf>"
