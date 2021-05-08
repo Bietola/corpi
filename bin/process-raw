@@ -5,7 +5,8 @@
     --package mtl
     --package text
     --package pretty-show
-    --package pcre-heavy
+    --package lens
+    --package lens-regex-pcre
     --package turtle
 -}
 
@@ -19,15 +20,16 @@ import Prelude hiding (tail, head)
 import qualified Data.List as L
 import Data.Functor
 import Control.Monad.State.Lazy
+import Control.Lens
+import Control.Lens.Regex.Text
 import qualified Control.Foldl as Fl
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 
 import Text.Show.Pretty
-import qualified Text.Regex.PCRE.Heavy as R
-import Text.Regex.PCRE.Heavy (re)
 
-import Turtle hiding ((<&>), match)
+import Turtle hiding ((<&>), match, view)
+import qualified Turtle as Sh (view)
 import qualified Turtle.Pattern as ShP
 
 -- tail n shl =
@@ -37,7 +39,7 @@ data VimMode = NormalMode | InsertMode | TermMode
 
 bannerLength = 17
 
-main = view $ do
+main = Sh.view $ do
     -- Remove Banner
     nobanner <- drop bannerLength <$> reduce Fl.list stdin
 
@@ -45,10 +47,10 @@ main = view $ do
     let oneline = lineToText $ mconcat nobanner
 
     -- return $ oneline &
-    return $ R.split [re|(<.*?>)|] $ oneline &
+    liftIO $ pPrint $ filter (not . T.null) $ view ([regex|(.*?)(<.+?>)|] . groups) $ oneline
         -- Detect and remove terminal mode
         -- TODO: Find a way to concatenate quasiquotation
-        R.gsub [re|<cps>.*?\Kgt.*?gt(?=.*?[iIaAoOC])|] T.empty
+        & [regex|<cps>.*?(gt.*?gt).*?[iIaAoOC]|] . group 0 .~ T.empty
 
         -- -- Remove direct mention to modifier keys
         -- -- TODO: Check for others
