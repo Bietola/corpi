@@ -1,43 +1,62 @@
 #!/usr/bin/env stack
 {- stack script
     --resolver lts-17.10
-    --package turtle
-    --package text
-    --package monadlist
     --package foldl
-    --package lens-regex-pcre
-    --package lens
+    --package mtl
+    --package text
+    --package pretty-show
+    --package pcre-heavy
+    --package turtle
 -}
 
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
-
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE BlockArguments #-}
 
 import Prelude hiding (tail, head)
 import qualified Data.List as L
 import Data.Functor
-import Control.Lens.Operators
-import qualified Control.Lens.Regex.Text as R
-import Control.Lens.Regex.Text (regex)
+import Control.Monad.State.Lazy
 import qualified Control.Foldl as Fl
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 
+import Text.Show.Pretty
+import qualified Text.Regex.PCRE.Heavy as R
+import Text.Regex.PCRE.Heavy (re)
+
 import Turtle hiding ((<&>), match)
 import qualified Turtle.Pattern as ShP
 
-tail n shl =
-    reduce Fl.list shl >>= select . drop n
+-- tail n shl =
+--     reduce Fl.list shl >>= select . drop n
+
+data VimMode = NormalMode | InsertMode | TermMode
 
 bannerLength = 17
 
-main = view $ let
+main = view $ do
     -- Remove Banner
-    nobanner = drop bannerLength <$> reduce Fl.list stdin
+    nobanner <- drop bannerLength <$> reduce Fl.list stdin
 
     -- Remove newlines
-    oneline = lineToText . mconcat <$> nobanner
+    let oneline = lineToText $ mconcat nobanner
 
-    -- Add buffer control seq.s
-    in oneline <&> [regex|<esc>.*?[iIaAoO]|] . R.match <>~ "<wbf>"
+    -- return $ oneline &
+    return $ R.split [re|(<.*?>)|] $ oneline &
+        -- Detect and remove terminal mode
+        -- TODO: Find a way to concatenate quasiquotation
+        R.gsub [re|<cps>.*?\Kgt.*?gt(?=.*?[iIaAoOC])|] T.empty
+
+        -- -- Remove direct mention to modifier keys
+        -- -- TODO: Check for others
+        -- R.gsub [re|(?:<lsh>|<lsu>)|] T.empty &
+
+        -- -- Remove shift modifiers (they are most of the time included in the keysym)
+        -- R.gsub [re|<[as]-([<>]|[^<>]*?)>|] (L.head @Text) &
+
+        -- -- Add buffer control seq.s and turn caps lock to esc
+        -- -- TODO: Add `cc` to list
+        -- R.gsub [re|<cps>(.*?[iIaAoOC])|] (("<esc>"<>) . (<>"<wbf>") . L.head @Text)

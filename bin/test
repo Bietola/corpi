@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+
+import re
+import fileinput
+
+spt_re = re.compile(r'(<.*?>)')
+print(
+    '\n'.join(
+        filter(
+            lambda e: e != '',
+            spt_re.split(next(fileinput.input()))
+        )
+    )
+)
