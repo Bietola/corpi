@@ -1,6 +1,7 @@
 #!/usr/bin/env stack
 {- stack script
     --resolver lts-17.10
+    --package raw-strings-qq
     --package foldl
     --package mtl
     --package text
@@ -15,6 +16,7 @@
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE LambdaCase #-}
 
 import Prelude hiding (tail, head)
 import qualified Data.List as L
@@ -46,19 +48,30 @@ main = Sh.view $ do
     -- Remove newlines
     let oneline = lineToText $ mconcat nobanner
 
-    -- return $ oneline &
-    liftIO $ pPrint $ filter (not . T.null) $ view ([regex|(.*?)(<.+?>)|] . groups) $ oneline
+    -- liftIO $ pPrint $ filter (not . T.null) $ view ([regex|(.*?)(<.+?>)|] . groups) $ oneline
+    return $ oneline
         -- Detect and remove terminal mode
         -- TODO: Find a way to concatenate quasiquotation
-        & [regex|<cps>.*?(gt.*?gt).*?[iIaAoOC]|] . group 0 .~ T.empty
+        -- TODO: List all insert mode changing commands
+        & [regex|<cps>.*?(gt.*?gt).*?[aAiIoO]|] . group 0 .~ T.empty
 
-        -- -- Remove direct mention to modifier keys
+        -- Remove direct mention to modifier keys
         -- -- TODO: Check for others
-        -- R.gsub [re|(?:<lsh>|<lsu>)|] T.empty &
+        & [regex|<lsh>|<lsu>|<lcl>|<lal>|<ral>|] . match .~ T.empty
 
-        -- -- Remove shift modifiers (they are most of the time included in the keysym)
-        -- R.gsub [re|<[as]-([<>]|[^<>]*?)>|] (L.head @Text) &
+        -- Remove shift modifiers (they are most of the time included in the keysym)
+        & [regex|<[as]([-+])([<>]|[^<>]*?)>|] . match .@~ (\[specialChar, charCode] ->
+            if specialChar == "+"
+               then T.concat ["<", charCode, ">"]
+               else charCode)
 
-        -- -- Add buffer control seq.s and turn caps lock to esc
-        -- -- TODO: Add `cc` to list
-        -- R.gsub [re|<cps>(.*?[iIaAoOC])|] (("<esc>"<>) . (<>"<wbf>") . L.head @Text)
+        -- Add buffer control seq.s and turn caps lock to esc
+        -- TODO: Add `cc` to list
+        & [regex|<cps>(.*?[iIaAoOC])|] . match .@~ (("<esc>"<>) . (<>"<wbf>") . L.head)
+
+        -- Escape `<` and `>`
+        -- & [regex|(?:<esc>|<tab>|<wbf>|<cr>|<bs>|<[csam]-.*?>)(.*?([><]).*?)*?(?:<esc>|<tab>|<wbf>|<cr>|<bs>|<[csam]-.*?>)|] . group 1 %~
+            -- \case
+                -- "<" -> "<lt>"
+                -- ">" -> "<gt>"
+                -- _ -> undefined
