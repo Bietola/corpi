@@ -31,7 +31,7 @@ import qualified Data.Text.IO as T
 import Text.Show.Pretty
 
 import Turtle hiding ((<&>), match, view)
-import qualified Turtle as Sh (view)
+import qualified Turtle as Sh
 import qualified Turtle.Pattern as ShP
 
 -- tail n shl =
@@ -41,7 +41,7 @@ data VimMode = NormalMode | InsertMode | TermMode
 
 bannerLength = 17
 
-main = Sh.view $ do
+main = Sh.sh $ do
     -- Remove Banner
     nobanner <- drop bannerLength <$> reduce Fl.list stdin
 
@@ -49,7 +49,7 @@ main = Sh.view $ do
     let oneline = lineToText $ mconcat nobanner
 
     -- liftIO $ pPrint $ filter (not . T.null) $ view ([regex|(.*?)(<.+?>)|] . groups) $ oneline
-    return $ oneline
+    liftIO $ T.putStrLn $ oneline
         -- Detect and remove terminal mode
         -- TODO: Find a way to concatenate quasiquotation
         -- TODO: List all insert mode changing commands
@@ -71,7 +71,7 @@ main = Sh.view $ do
 
         -- Escape `<` and `>`
         -- & [regex|(?:<esc>|<tab>|<wbf>|<cr>|<bs>|<[csam]-.*?>)(.*?([><]).*?)*?(?:<esc>|<tab>|<wbf>|<cr>|<bs>|<[csam]-.*?>)|] . group 1 %~
-            -- \case
-                -- "<" -> "<lt>"
-                -- ">" -> "<gt>"
-                -- _ -> undefined
+        --     \case
+        --         "<" -> "<lt>"
+        --         ">" -> "<gt>"
+        --         _ -> undefined
