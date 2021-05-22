@@ -1,0 +1,37 @@
+#!/usr/bin/env stack
+{- stack
+    --resolver lts-17.10
+    --install-ghc
+    script
+    --package turtle
+    --package foldl
+    --package text
+    --package pretty-show
+    --package lens
+    --package lens-regex-pcre
+-}
+
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE BlockArguments #-}
+
+import Prelude hiding (tail, head)
+import qualified Data.List as L
+import Data.Functor
+import Control.Monad
+import Control.Lens hiding (has, view)
+import Control.Lens.Regex.Text
+import qualified Control.Foldl as Fl
+import qualified Data.Text as T
+import qualified Data.Text.IO as T
+import Text.Show.Pretty
+import Turtle hiding ((<&>))
+
+optP =  some $ argText "CORPI_LIST" empty
+
+main = view $ do
+    corpi <- options "Fetch and show concatenated corpi" optP
+    forM corpi $
+        \e -> pwd >>= find (has $ repr e)

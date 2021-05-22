@@ -1,0 +1,66 @@
+#!/bin/sh
+
+ROOT="/home/dincio/corpi"
+bin="$ROOT/bin"
+
+usage() {
+    echo "Usage: cook <tags-find recipes [...]> [\;] [-f/--force] [-c/--cache] [-v]"
+    $bin/tags-find --help
+
+    exit 1
+}
+
+RECIPE_NAME="$(
+    # TODO: Add check for 1!
+    # TODO/CC: finish this horrible thing
+    $bin/tags-find recipes "${@%\\;}"
+)"
+RECIPE_TAGS="${RECIPE_NAME%.*}"
+RECIPE_PATH="$ROOT/recipes/$RECIPE_NAME"
+
+# Parse flags
+DO_CACHE=false
+FORCE=false
+VERBOSE=0
+while [ -n "$(printf "%s\n" $1 | grep ^-)" -a ! "$1" == "--" ]; do case $1 in
+    -v | --verbose )
+        shift
+        VERBOSE=$((VERBOSE + 1))
+        ;;
+    -c | --cache )
+        shift
+        DO_CACHE=true
+        ;;
+    -f | --force )
+        shift
+        FORCE=true
+        ;;
+    *)
+        printf "Unknown flag: $1"
+        exit 1
+esac; done
+if [ "$1" == '--' ]; then shift; fi
+
+cd "$ROOT/bin"
+
+RES=$(source "$RECIPE_PATH")
+
+printf "%s\n" "$RES"
+
+if $DO_CACHE; then
+    CORPUS_NAME="${RECIPE_TAGS}.txt"
+    CORPUS_PATH="$ROOT/corpi/$CORPUS_NAME"
+
+    [ -e "$CORPUS_PATH" ] && {
+        printf "ERR: Corpus file with name $CORPUS_NAME already exists!\n" >& 2
+
+        [ $VERBOSE -ge 1 ] && cat "$CORPUS_PATH" >& 2
+
+        $FORCE || exit 1
+    }
+
+    printf "%s\n" "$RES" > "$CORPUS_PATH"
+    printf "LOG: Written to $CORPUS_PATH\n" >& 2
+fi
+
+cd - >/dev/null

@@ -1,0 +1,71 @@
+#!/bin/sh
+
+# Usage
+usage() {
+    echo "Usage: tags-find [-h/--help] SEARCH_DIR [-B/--basename] [-N/--numbers-only] (-t TAG|-n NUM)+"
+
+    exit 1
+}
+
+# Parse flags before SEARCH_DIR is specified
+while [ -n "$(printf "%s\n" $1 | grep '^-')" -a ! "$1" == "--" ]; do case $1 in
+  -h | --help )
+    usage
+    ;;
+  *)
+    printf "Unknown flag: $1\n"
+    usage
+esac; done
+if [ "$1" == '--' ]; then shift; fi
+
+# Get SEARCH_DIR
+[ $# -lt 1 ] && usage
+ROOT="/home/dincio/corpi"
+SEARCH_DIR="$1"; shift
+SEARCH_DIR="$ROOT/$SEARCH_DIR"
+
+# Parse flags
+TAGS=""
+NUMS=""
+NUMS_ONLY=false
+BASENAME=false
+while [ -n "$(printf "%s\n" "$1" | grep '^-')" ]; do case $1 in
+    -B | --basename )
+        shift
+        BASENAME=true
+        ;;
+    -N | --numbers-only )
+        shift
+        NUMS_ONLY=true
+        ;;
+    -t | --tag )
+        shift
+        TAGS+="$1 "; shift
+        ;;
+    -n | --num )
+        shift
+        NUMS+="$1 "; shift
+        ;;
+    *)
+        printf "Unknown flag: $1\n"
+        usage
+esac; done
+
+{
+    # Get files based on numbers
+    for num in $NUMS; do
+        find "$SEARCH_DIR" -regex ".*/$num\..*" -regex '.*\.txt$'
+    done
+
+    # Get files based on tags
+    for tag in $TAGS; do
+        find "$SEARCH_DIR" -regex ".*/.*\.$tag\..*" -regex '.*\.txt$'
+    done
+} |\
+
+# Remove duplicates
+sort -u |\
+
+# Apply partial info flags (if toggled on)
+if { $BASENAME || $NUMS_ONLY; }; then /sul/largs basename; else /sul/largs echo; fi |\
+if $NUMS_ONLY; then sed 's/\..*$//g'; else /sul/largs echo; fi

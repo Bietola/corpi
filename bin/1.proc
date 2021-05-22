@@ -42,11 +42,11 @@ data VimMode = NormalMode | InsertMode | TermMode
 bannerLength = 17
 
 main = Sh.sh $ do
-    -- Remove Banner
-    nobanner <- drop bannerLength <$> reduce Fl.list stdin
+    -- Remove Banner (no longer needed)
+    -- nobanner <- drop bannerLength <$> reduce Fl.list stdin
 
     -- Remove newlines
-    let oneline = lineToText $ mconcat nobanner
+    oneline <- lineToText . mconcat <$> reduce Fl.list stdin
 
     -- liftIO $ pPrint $ filter (not . T.null) $ view ([regex|(.*?)(<.+?>)|] . groups) $ oneline
     liftIO $ T.putStrLn $ oneline

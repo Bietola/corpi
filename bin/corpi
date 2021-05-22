@@ -1,0 +1,8 @@
+#!/bin/sh
+
+{
+    # TODO: Make this lazily generate corpi
+
+    ./tags-find corpi "$@" ||\
+        printf 'Usage: same as `tags-find corpi [...]`\n'
+} | /sul/largs cat

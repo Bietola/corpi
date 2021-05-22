@@ -1,0 +1,8 @@
+#!/bin/sh
+
+BANNER_LEN=18
+
+{
+    ./tags-find recs "$@" ||\
+        printf 'Usage: same as `tags-find recs [...]`\n'
+} | /sul/largs tail +$BANNER_LEN
