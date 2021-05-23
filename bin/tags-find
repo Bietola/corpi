@@ -54,12 +54,17 @@ esac; done
 {
     # Get files based on numbers
     for num in $NUMS; do
-        find "$SEARCH_DIR" -regex ".*/$num\..*" -regex '.*\.txt$'
+        find "$SEARCH_DIR" \
+            -regextype posix-extended \
+            -regex ".*/$num\..*" -regex '.*\.(sh|txt)$'
     done
 
     # Get files based on tags
     for tag in $TAGS; do
-        find "$SEARCH_DIR" -regex ".*/.*\.$tag\..*" -regex '.*\.txt$'
+        find "$SEARCH_DIR" \
+            -regextype posix-extended \
+            -regex ".*/.*\.$tag\..*" \
+            -regex '.*\.(txt|sh)$'
     done
 } |\
 

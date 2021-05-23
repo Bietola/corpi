@@ -4,19 +4,33 @@ ROOT="/home/dincio/corpi"
 bin="$ROOT/bin"
 
 usage() {
-    echo "Usage: cook <tags-find recipes [...]> [\;] [-f/--force] [-c/--cache] [-v]"
+    echo "Usage: cook <tags-find recipes [...]> [--] [-f/--force] [-c/--cache] [-v]"
     $bin/tags-find --help
 
     exit 1
 }
 
+TAG_ARGS="$*"
+TAG_ARGS="${TAG_ARGS% -- *}"
+
 RECIPE_NAME="$(
     # TODO: Add check for 1!
-    # TODO/CC: finish this horrible thing
-    $bin/tags-find recipes "${@%\\;}"
+    $bin/tags-find recipes $TAG_ARGS | /sul/largs basename
 )"
+
+# Check that 1! recipe is found
+RECIPES_N=$(echo "$RECIPE_NAME" | wc -l) 
+[ $RECIPES_N -eq 0 ] && { printf "No files found with tags [%s]!\n" "$TAG_ARGS"; exit 1; }
+[ $RECIPES_N -gt 1 ] && {
+    printf "Multiple files found with tags [%s]!:\n" "$TAG_ARGS";
+    printf "%s\n" "$RECIPE_NAME"
+    exit 1;
+}
+
 RECIPE_TAGS="${RECIPE_NAME%.*}"
 RECIPE_PATH="$ROOT/recipes/$RECIPE_NAME"
+shift $(printf "%s" "$TAG_ARGS" | wc -w)
+[ "$1" == "--" ] && shift
 
 # Parse flags
 DO_CACHE=false
@@ -36,7 +50,7 @@ while [ -n "$(printf "%s\n" $1 | grep ^-)" -a ! "$1" == "--" ]; do case $1 in
         FORCE=true
         ;;
     *)
-        printf "Unknown flag: $1"
+        printf "Unknown flag: $1\n"
         exit 1
 esac; done
 if [ "$1" == '--' ]; then shift; fi
@@ -50,11 +64,12 @@ printf "%s\n" "$RES"
 if $DO_CACHE; then
     CORPUS_NAME="${RECIPE_TAGS}.txt"
     CORPUS_PATH="$ROOT/corpi/$CORPUS_NAME"
+    CORPUS_N="${CORPUS_NAME%%.*}"
 
-    [ -e "$CORPUS_PATH" ] && {
-        printf "ERR: Corpus file with name $CORPUS_NAME already exists!\n" >& 2
+    [ -n "$(find "$ROOT/corpi" -regex ".*$CORPUS_N\..*")" ] && {
+        printf "ERR: Corpus file with number $CORPUS_N already exists!\n" >& 2
 
-        [ $VERBOSE -ge 1 ] && cat "$CORPUS_PATH" >& 2
+        [ $VERBOSE -ge 1 ] && printf "ERR: %s\n" "$(cat "$CORPUS_PATH")" >& 2
 
         $FORCE || exit 1
     }
