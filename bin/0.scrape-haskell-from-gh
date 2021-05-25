@@ -1,0 +1,40 @@
+#!/bin/sh
+
+ROOT="/home/dincio/corpi"
+
+usage() {
+    echo "Usage: 0.scrape-haskell-from-gh GH_URL"
+
+    exit 1
+}
+
+# Parse flags
+DO_DL=true
+while [ -n "$(printf "%s\n" $1 | grep '^-')" -a ! "$1" == '--' ]; do case $1 in
+    -nd | --no-dl )
+        shift
+        DO_DL=false
+        ;;
+    *)
+        printf "Unknown flag: $1\n"
+        exit 1
+esac; done
+if [ "$1" == '--' ]; then shift; fi
+
+[[ $# -ne 1 ]] && usage
+
+GH_REP_URL="$1"
+GH_REP_NAME="$(basename "$GH_REP_URL")"
+
+# Clone rep
+cd "$ROOT/scrape/hs/gh/"
+$DO_DL && {
+    rm -rf "$GH_REP_NAME"
+    git clone "$GH_REP_URL"
+}
+
+# Cat all hs files in rep
+find "$GH_REP_NAME" -name *.hs | /sul/largs cat
+
+# Return to old rep
+cd - > /dev/null

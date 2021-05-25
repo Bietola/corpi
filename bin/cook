@@ -57,7 +57,7 @@ if [ "$1" == '--' ]; then shift; fi
 
 cd "$ROOT/bin"
 
-RES=$(source "$RECIPE_PATH")
+RES=$(bash "$RECIPE_PATH")
 
 printf "%s\n" "$RES"
 

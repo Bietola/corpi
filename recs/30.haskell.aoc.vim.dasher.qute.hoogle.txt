@@ -1,0 +1,124 @@
+libUIOHook: Cross-platfrom userland keyboard and mouse hooking.
+Copyright (C) 2006-2015 Alexander Barker.  All Rights Received.
+https://github.com/kwhat/libuiohook/
+
+libUIOHook is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+libUIOHook is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+<m-1>
+à
+t
+t
+s
+t
+a
+c
+k
+b
+u
+i
+l
+d
+<cr>
+ò
+k
+<c-d>
+<c-d>
+ò
+q
+<m-2>
+<m-b>
+<m-1>
+<m-2>
+<m-1>
+<m-2>
+<m-1>
+<m-1>
+<m-2>
+<m-3>
+<m+tab>
+<m+tab>
+<m-1>
+<m-2>
+<m-3>
+<m-4>
+<m-2>
+<m-1>
+<m-b>
+<m- >
+<m-1>
+<m-2>
+o
+h
+o
+o
+g
+l
+e
+<tab>
+<cr>
+a
+<bs>
+<s-D>
+a
+t
+a
+.
+<s-F>
+u
+n
+c
+t
+o
+r
+<cr>
+<s-(>
+<s-&>
+<s-)>
+<cr>
+<m-1>
+j
+j
+j
+j
+f
+<s-F>
+<s-C>
+<s-F>
+u
+n
+c
+t
+i
+o
+n
+<esc>
+à
+t
+t
+<m-7>
+<sm+cr>
+<sm-C>
+<m+tab>
+<m+tab>
+<m+tab>
+<m+tab>
+<m+tab>
+p
+o
+m
+o
+<cr>
+<m-1>
+<m-8>
+<sa-C>

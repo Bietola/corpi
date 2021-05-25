@@ -1,0 +1,48 @@
+#!/usr/bin/env stack
+{- stack script
+    --resolver lts-17.10
+    --package raw-strings-qq
+    --package split
+    --package foldl
+    --package mtl
+    --package text
+    --package pretty-show
+    --package lens
+    --package lens-regex-pcre
+    --package turtle
+-}
+
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE LambdaCase #-}
+
+import Prelude hiding (tail, head)
+import qualified Data.List as L
+import qualified Data.List.Split as L
+import Data.Functor
+import Control.Monad.State.Lazy
+import Control.Arrow
+import Control.Lens
+import Control.Lens.Regex.Text
+import qualified Control.Foldl as Fl
+import qualified Data.Text as T
+import qualified Data.Text.IO as T
+
+import Debug.Trace
+import Text.Show.Pretty
+
+import Turtle hiding ((<&>), match, view)
+import qualified Turtle as Sh
+import qualified Turtle.Pattern as ShP
+
+collapseSpaces = [regex|\s+|] . match .~ " "
+
+main = Sh.sh $ do
+    -- Remove newlines
+    oneline <- lineToText . mconcat . L.intersperse "<cr>" <$> reduce Fl.list stdin
+    
+    -- output
+    liftIO $ T.putStrLn $ collapseSpaces oneline

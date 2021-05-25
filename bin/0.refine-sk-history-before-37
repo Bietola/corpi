@@ -1,0 +1,8 @@
+#!/bin/sh
+
+STREAMK_HISTORY="/home/dincio/code/streamkey/assets/history"
+
+cat "$STREAMK_HISTORY" |\
+  sed -e 's/----//g' -e 's/<esc>/<bfi>/g' -e 's/<wbf>/<bfw>/g' |\
+  sed 's/<bfi><bfi>/<bfi>/g' |\
+  tr -d '\n'

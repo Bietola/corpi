@@ -1,0 +1,9 @@
+-- Haskell
+collapseSpaces :: T.Text -> T.Text
+collapseSpaces =
+    ([regex|"([^"\\]+|\\.*)"|] . match %~ ("\0" <>) . (<> "\0"))
+    >>> T.split (=='\0')
+    >>> zipWith ($) (cycle [collapseSpaces', id])
+    >>> T.concat
+
+    where collapseSpaces' = [regex|\s+|] . match .~ " "

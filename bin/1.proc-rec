@@ -47,13 +47,13 @@ main = Sh.sh $ do
 
     -- Remove newlines
     oneline <- lineToText . mconcat <$> reduce Fl.list stdin
-
+    
     -- liftIO $ pPrint $ filter (not . T.null) $ view ([regex|(.*?)(<.+?>)|] . groups) $ oneline
     liftIO $ T.putStrLn $ oneline
         -- Detect and remove terminal mode
         -- TODO: Find a way to concatenate quasiquotation
         -- TODO: List all insert mode changing commands
-        & [regex|<cps>.*?(gt.*?gt).*?[aAiIoO]|] . group 0 .~ T.empty
+        -- & [regex|<cps>.*?(gt.*?gt).*?[aAiIoO]|] . group 0 .~ T.empty
 
         -- Remove direct mention to modifier keys
         -- -- TODO: Check for others
@@ -65,13 +65,9 @@ main = Sh.sh $ do
                then T.concat ["<", charCode, ">"]
                else charCode)
 
-        -- Add buffer control seq.s and turn caps lock to esc
-        -- TODO: Add `cc` to list
-        & [regex|<cps>(.*?[iIaAoOC])|] . match .@~ (("<esc>"<>) . (<>"<wbf>") . L.head)
+        -- Turn caps lock to esc
+        & [regex|<cps>|] . match .~ "<esc>"
 
-        -- Escape `<` and `>`
-        -- & [regex|(?:<esc>|<tab>|<wbf>|<cr>|<bs>|<[csam]-.*?>)(.*?([><]).*?)*?(?:<esc>|<tab>|<wbf>|<cr>|<bs>|<[csam]-.*?>)|] . group 1 %~
-        --     \case
-        --         "<" -> "<lt>"
-        --         ">" -> "<gt>"
-        --         _ -> undefined
+        -- Add buffer control seq.s
+        -- TODO: Add `cc` to list
+        & [regex|<esc>(.*?[iIaAoOC])|] . group 0 %~ ("<bfi>"<>) . (<>"<bfq>")

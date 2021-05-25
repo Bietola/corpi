@@ -1,0 +1,49 @@
+#!/usr/bin/env stack
+{- stack script
+    --resolver lts-17.10
+    --package raw-strings-qq
+    --package foldl
+    --package mtl
+    --package split
+    --package text
+    --package pretty-show
+    --package lens
+    --package lens-regex-pcre
+    --package turtle
+-}
+
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE LambdaCase #-}
+
+import Prelude hiding (tail, head)
+import qualified Data.List as L
+import qualified Data.List.Split as L
+import Data.Functor
+import Control.Monad.State.Lazy
+import Control.Lens hiding (view)
+import Control.Lens.Regex.Text
+import qualified Control.Foldl as Fl
+import qualified Data.Text as T
+import qualified Data.Text.IO as T
+import Debug.Trace
+import Text.Show.Pretty
+import Turtle
+
+argsP = (,) <$> optPath "vim" 'v' "File containing vim phrases to intersperse"
+            <*> optPath "corpus" 'c' "Corpus file to be interspersed w/ vim phrases"
+
+main = sh do
+    (vimFile, corpusFile) <- options "Intersperse vim phrases in corpus" argsP
+
+    oneline <- lineToText . mconcat <$> reduce Fl.list (input corpusFile)
+    vimPhrases <- fmap lineToText <$> reduce Fl.list (input vimFile)
+
+    liftIO $ putStrLn $ oneline
+        & T.unpack
+        & L.chunksOf (T.length oneline `div` L.length vimPhrases) 
+        & zipWith (++) (map T.unpack vimPhrases)
+        & L.intercalate []

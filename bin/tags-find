@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Utility
+istag() {
+    return [ -n "$(printf "%s" "$1" | grep '^-')" ]
+}
+
 # Usage
 usage() {
     echo "Usage: tags-find [-h/--help] SEARCH_DIR [-B/--basename] [-N/--numbers-only] (-t TAG|-n NUM)+"
@@ -29,7 +34,7 @@ TAGS=""
 NUMS=""
 NUMS_ONLY=false
 BASENAME=false
-while [ -n "$(printf "%s\n" "$1" | grep '^-')" ]; do case $1 in
+while [ -n "$(printf "%s" "$1" | grep '^-')" ]; do case $1 in
     -B | --basename )
         shift
         BASENAME=true
@@ -40,11 +45,15 @@ while [ -n "$(printf "%s\n" "$1" | grep '^-')" ]; do case $1 in
         ;;
     -t | --tag )
         shift
-        TAGS+="$1 "; shift
+        while [ -n "$1" -a -z "$(printf "%s" "$1" | grep '^-')" ]; do
+            TAGS+="$1 "; shift
+        done
         ;;
     -n | --num )
         shift
-        NUMS+="$1 "; shift
+        while [ -n "$1" -a -z "$(printf "%s" "$1" | grep '^-')" ]; do
+            NUMS+="$1 "; shift
+        done
         ;;
     *)
         printf "Unknown flag: $1\n"
