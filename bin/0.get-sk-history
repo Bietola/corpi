@@ -8,19 +8,39 @@ usage() {
   exit 1
 }
 
-[ $# -ne 1 ] && usage
+# Parse flags
+GET_LAST=false
+while [ -n "$(printf "%s\n" $1 | grep '^-')" -a ! "$1" == '--' ]; do case $1 in
+    -l | --get-last )
+        shift
+        GET_LAST=true
+        ;;
+    *)
+        printf "Unknown flag: $1\n"
+        exit 1
+esac; done
+if [ "$1" == '--' ]; then shift; fi
 
-HIST_N="$1"
-NXT_HN=$(( HIST_N + 1 ))
+
+if $GET_LAST; then
+    SEARCH_EXPR='/:----\s+\d+:(.*?):$/ && print("$1\n")'
+else
+    [ $# -ne 1 ] && usage
+
+    HIST_N="$1"
+    NXT_HN=$(( HIST_N + 1 ))
+
+    SEARCH_EXPR="$(printf \
+      '/(:----\s+%s:(.*?)(:----\s+%s:|:$))/ && print("$1\n")' \
+      $HIST_N $NXT_HN \
+    )"
+fi
 
 cat "$SK_HIST_FILE" |\
 
   tr '\n' ':' |\
 
-  perl -ne "$(printf \
-    '/(:----\s+%s:(.*?):----\s+%s:)/ && print("$2\n")' \
-    $HIST_N $NXT_HN \
-  )" |\
+  perl -ne "$SEARCH_EXPR" |\
 
   /sul/catch-empty -er "$(printf \
     'ERR?: Either empty history at #[%s] or invalid range' \
