@@ -25,6 +25,8 @@ RECS='12 16 17 19 21 22 23 24 25 26 27'
 
             } | tr -d '\n')
 
-    ./0.refine-sk-history-before-37
+    ./0.get-sk-history 1 14 | ./0.refine-sk-history-before-14
+
+    ./0.get-sk-history 24 25
 
 } | tr -d '\n'

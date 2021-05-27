@@ -1,0 +1,21 @@
+#!/bin/sh
+
+SK_HIST_FILE="/home/dincio/code/streamkey/assets/history"
+
+usage() {
+    echo "Usage: 0.get-last-sk-hist-num"
+
+    exit 1
+}
+
+[ $# -ne 0 ] && usage
+
+cat "$SK_HIST_FILE" |\
+
+  perl -ne '/^----\s+(\d+)$/ && print("$1\n")' |\
+
+  tail -1 |\
+
+  /sul/catch-empty -er "$(printf \
+    'ERR: Malformed or empty history' \
+  )"

@@ -3,46 +3,28 @@
 SK_HIST_FILE="/home/dincio/code/streamkey/assets/history"
 
 usage() {
-  echo "Usage: 0.get-sk-history HIST_N"
+  echo "Usage: 0.get-sk-history FST_HIST_N [LST_HIST_N]"
 
   exit 1
 }
 
-# Parse flags
-GET_LAST=false
-while [ -n "$(printf "%s\n" $1 | grep '^-')" -a ! "$1" == '--' ]; do case $1 in
-    -l | --get-last )
-        shift
-        GET_LAST=true
-        ;;
-    *)
-        printf "Unknown flag: $1\n"
-        exit 1
-esac; done
-if [ "$1" == '--' ]; then shift; fi
+[ $# -gt 2 -o $# -lt 1 ] && usage
 
-
-if $GET_LAST; then
-    SEARCH_EXPR='/:----\s+\d+:(.*?):$/ && print("$1\n")'
-else
-    [ $# -ne 1 ] && usage
-
-    HIST_N="$1"
-    NXT_HN=$(( HIST_N + 1 ))
-
-    SEARCH_EXPR="$(printf \
-      '/(:----\s+%s:(.*?)(:----\s+%s:|:$))/ && print("$1\n")' \
-      $HIST_N $NXT_HN \
-    )"
-fi
+FST_HIST_N="$1"
+LST_HIST_HN=$"{2:-$(( HIST_N + 1 ))}"
 
 cat "$SK_HIST_FILE" |\
 
   tr '\n' ':' |\
 
-  perl -ne "$SEARCH_EXPR" |\
+  perl -ne "$(printf \
+    '/(:----\s+%s:(.*?):(?:----\s+%s:|$))/ && print("$2\n")' \
+    $FST_HIST_N $LST_HIST_HN \
+  )" |\
+
+  perl -pe 's/:----\s+\d+://g' |\
 
   /sul/catch-empty -er "$(printf \
-    'ERR?: Either empty history at #[%s] or invalid range' \
-    $HIST_N
+    'ERR?: Either empty history at #[%s-%s] or invalid range' \
+    $FST_HIST_N $LST_HIST_HN
   )"

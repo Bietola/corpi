@@ -1,0 +1,5 @@
+#!/bin/sh
+
+sed -e 's/----//g' -e 's/<esc>/<bfi>/g' -e 's/<wbf>/<bfw>/g' |\
+sed 's/<bfi><bfi>/<bfi>/g' |\
+tr -d '\n'
