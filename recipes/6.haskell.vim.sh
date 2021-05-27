@@ -9,10 +9,15 @@ RECS='12 16 17 19 21 22 23 24 25 26 27'
             ) \
         -c <({
 
-                ./0.scrape-haskell-from-gh -nd 'https://github.com/glguy/advent2017' |\
+                ./0.scrape-haskell-from-gh -C 'https://github.com/glguy/advent2017' \
+                    fed4592b076d255297dbddf2a183c70d6d0acfa4 |\
                     ./1.proc-src
 
-                # Arrows where used extensively in ghci non-vim mode in this age... which should not be the case,
+                ./0.scrape-haskell-from-gh -C 'https://github.com/Bietola/streamkey' \
+                    492addee6725398797081ba8481454fa779dcf63 |\
+                    ./1.proc-src
+
+                # Arrows were used extensively in ghci non-vim mode in this age... which should not be the case,
                 # hence the perl sub
                 ./recs -n $RECS |\
                     perl -pe 's/(<lft>|<rgt>|<up>|<dwn>)//g' |\

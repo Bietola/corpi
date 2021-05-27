@@ -1,0 +1,28 @@
+#!/bin/sh
+
+SK_HIST_FILE="/home/dincio/code/streamkey/assets/history"
+
+usage() {
+  echo "Usage: 0.get-sk-history HIST_N"
+
+  exit 1
+}
+
+[ $# -ne 1 ] && usage
+
+HIST_N="$1"
+NXT_HN=$(( HIST_N + 1 ))
+
+cat "$SK_HIST_FILE" |\
+
+  tr '\n' ':' |\
+
+  perl -ne "$(printf \
+    '/(:----\s+%s:(.*?):----\s+%s:)/ && print("$2\n")' \
+    $HIST_N $NXT_HN \
+  )" |\
+
+  /sul/catch-empty -er "$(printf \
+    'ERR?: Either empty history at #[%s] or invalid range' \
+    $HIST_N
+  )"
