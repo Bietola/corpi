@@ -11,20 +11,20 @@ usage() {
 [ $# -gt 2 -o $# -lt 1 ] && usage
 
 FST_HIST_N="$1"
-LST_HIST_HN=$"{2:-$(( HIST_N + 1 ))}"
+LST_HIST_N="${2:-$(( FST_HIST_N + 1 ))}"
 
 cat "$SK_HIST_FILE" |\
 
   tr '\n' ':' |\
 
   perl -ne "$(printf \
-    '/(:----\s+%s:(.*?):(?:----\s+%s:|$))/ && print("$2\n")' \
-    $FST_HIST_N $LST_HIST_HN \
+    '/:----\s+%s:(.*?)(?::----\s+%s:|:$)/ && print("$1\n")' \
+    $FST_HIST_N $LST_HIST_N \
   )" |\
 
-  perl -pe 's/:----\s+\d+://g' |\
+  perl -pe 's/:----\s+\d+:/ /g' |\
 
   /sul/catch-empty -er "$(printf \
     'ERR?: Either empty history at #[%s-%s] or invalid range' \
-    $FST_HIST_N $LST_HIST_HN
+    $FST_HIST_N $LST_HIST_N
   )"
