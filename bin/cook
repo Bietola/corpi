@@ -18,6 +18,8 @@ RECIPE_NAME="$(
     $bin/tags-find recipes $TAG_ARGS | /sul/largs basename
 )"
 
+printf >&2 'Got recipe name: %s\n' "$RECIPE_NAME"
+
 # Check that 1! recipe is found
 RECIPES_N=$(echo "$RECIPE_NAME" | wc -l) 
 [ $RECIPES_N -eq 0 ] && { printf "No files found with tags [%s]!\n" "$TAG_ARGS"; exit 1; }
@@ -57,6 +59,7 @@ if [ "$1" == '--' ]; then shift; fi
 
 cd "$ROOT/bin"
 
+printf >&2 'Cooking recipe\n'
 RES=$(bash "$RECIPE_PATH")
 
 printf "%s\n" "$RES"

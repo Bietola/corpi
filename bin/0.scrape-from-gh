@@ -1,0 +1,68 @@
+#!/bin/sh
+
+ROOT="/home/dincio/corpi"
+
+usage() {
+    echo "Usage: 0.scrape-haskell-from-gh [-C/--use-cache] [-F/--filter REGEX_FILTER] GH_URL [GIT_COMMIT_SHA]"
+
+    exit 1
+}
+
+# Parse flags
+USE_CACHE=false
+SCRAPE_FILTER=
+LANGUAGE_TAG=unknown #TODO: Add flag to set this
+while [ -n "$(printf "%s\n" $1 | grep '^-')" -a ! "$1" == '--' ]; do case $1 in
+    -C | --use-cache )
+        shift
+        USE_CACHE=true
+        ;;
+    -F | --filter )
+        shift
+        SCRAPE_FILTER="$1"; shift
+        ;;
+    *)
+        printf "Unknown flag: $1\n"
+        exit 1
+esac; done
+if [ "$1" == '--' ]; then shift; fi
+
+[ $# -gt 2 -o $# -lt 1 ] && usage
+
+GH_REP_URL="$1"
+GH_REP_NAME="$(basename "$GH_REP_URL")"
+
+# Clone rep
+mkdir -p "$ROOT/scrape/$LANGUAGE_TAG/gh/"
+cd "$ROOT/scrape/$LANGUAGE_TAG/gh/"
+if [ -e "$GH_REP_NAME" ]; then
+    if [ ! $USE_CACHE ]; then
+        # TODO: Find a way to `git fetch` good
+        printf >&2 'Cloning rep\n'
+        rm -rf "$GH_REP_NAME"
+        git clone "$GH_REP_URL"
+    else
+        printf >&2 'Skipping clone; using cache\n'
+    fi
+else
+    printf >&2 'Cloning rep\n'
+    git clone "$GH_REP_URL"
+fi
+
+# Move to specified remote
+printf >&2 'Moving git rep to %s\n' "$GIT_COMMIT_SHA"
+GIT_COMMIT_SHA="${2:-"$(git ls-remote "$GH_REP_URL" | grep HEAD | awk '{print $1}')"}"
+( cd "$GH_REP_NAME"; git checkout "$GIT_COMMIT_SHA" 2>/dev/null; )
+
+# Init
+SCRAPE_FILTER_EXPR=
+
+# Apply them
+[ -n "$SCRAPE_FILTER" ] && SCRAPE_FILTER_EXPR="-regex '$SCRAPE_FILTER'"
+
+find "$GH_REP_NAME" \
+    -regextype posix-extended \
+    $SCRAPE_FILTER_EXPR
+
+# Return to old rep
+cd - > /dev/null

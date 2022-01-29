@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# usage() {
+#     echo "Usage: get PATH"
+
+#     exit 1
+# }
+
+# [ $# -ne 1 ] && usage
+
+ROOT="/home/dincio/corpi"
+
+PTH="$1"
+
+ls "$ROOT/$PTH"

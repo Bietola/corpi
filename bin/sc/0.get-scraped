@@ -1,0 +1,13 @@
+#!/bin/sh
+
+usage() {
+    echo "Usage: 0.get-scraped"
+
+    exit 1
+}
+
+[ $# -ne 0 ] && usage
+
+SCRAPE_DIR=/home/dincio/corpi/scrape/sc
+
+find "$SCRAPE_DIR" -name *.sc | /sul/largs cat
