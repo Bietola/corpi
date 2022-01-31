@@ -1,0 +1,288 @@
+#1643647406
+source .bashrc
+#1643647453
+cat .bash_history 
+#1643647461
+cat .bash_history > .bash_eternal_history
+#1643647464
+hello
+#1643647471
+wc .bash_eternal_history 
+#1643647474
+wc -l .bash_eternal_history 
+#1643647477
+wc -l .bash_eternal_history 
+#1643647477
+wc -l .bash_eternal_history 
+#1643647478
+wc -l .bash_eternal_history 
+#1643647478
+wc -l .bash_eternal_history 
+#1643647480
+eoacin aeoicn oain 
+#1643647481
+eoacin aeoicn oain 
+#1643647485
+tail .bash_eternal_history 
+#1643647491
+hello
+#1643647492
+hello
+#1643647494
+tail .bash_eternal_history 
+#1643647528
+ls
+#1643647531
+history -w
+#1643647531
+history -w
+#1643647533
+ls
+#1643647541
+find . -type f
+#1643647546
+find -maxdepth 1 . -type f
+#1643647557
+find . -maxdepth 1 -type f
+#1643647572
+find . -maxdepth 1 -type f ! -name '.'
+#1643647575
+find . -maxdepth 1 -type f ! -name '\.'
+#1643647623
+shopt -s extglob
+#1643647635
+find . -maxdepth 1 -type f -name '!(^.)'
+#1643647638
+find . -maxdepth 1 -type f -name '!(.)'
+#1643647640
+find . -maxdepth 1 -type f -name '!(.*)'
+#1643647642
+find . -maxdepth 1 -type f -name '!(\.*)'
+#1643647646
+find . -maxdepth 1 -type f -name '!(^\.*)'
+#1643647653
+find . -maxdepth 1 -type f -regex '\.'
+#1643647656
+find . -maxdepth 1 -type f 
+#1643647665
+find . -maxdepth 1 -type f -regex '^\..*'
+#1643647673
+find . -maxdepth 1 -type f -regex '^\.'
+#1643647675
+find . -maxdepth 1 -type f -regex '^\..*'
+#1643647687
+man find
+#1643647712
+find . -regextype posix-extended -maxdepth 1 -type f -regex '^\..*'
+#1643647725
+find . -regextype posix-extended -maxdepth 1 -type f -name '^\..*'
+#1643647728
+ls
+#1643647743
+find . -type f | grep -v '^\.'
+#1643647752
+find . -maxdepth 1 -type f | grep -v '^\.'
+#1643647757
+find . -maxdepth 1 -type f | grep '^\.'
+#1643647761
+find . -maxdepth 1 -type f | rg '^\.'
+#1643647772
+find . -maxdepth 1 -type f | rg '^\./\.'
+#1643647776
+find . -maxdepth 1 -type f | rg -v '^\./\.'
+#1643647790
+find . -maxdepth 1 -type f | rg -v '^\./\.' -v 'kazam'
+#1643647798
+find . -maxdepth 1 -type f | rg -v '^\./\.' | rg -v kazam
+#1643647803
+find . -maxdepth 1 -type f | rg -v '^\./\.' | rg -v kazam | rg -v steno
+#1643647814
+find . -maxdepth 1 -type f | rg -v '^\./\.' | rg -v kazam | rg -v steno | rg -v Screen
+#1643647819
+find . -maxdepth 1 -type f | rg -v '^\./\.' | rg -v kazam | rg -v steno | rg -v Screen | largs rm
+#1643647824
+find . -maxdepth 1 -type f | rg -v '^\./\.' | rg -v kazam | rg -v steno | rg -v Screen 
+#1643647832
+cat .bash_eternal_history 
+#1643647922
+cp .bash_eternal_history corpi/scrape/bash/history
+#1643647928
+mkdir -p corpi/scrape/bash/history
+#1643647930
+cp .bash_eternal_history corpi/scrape/bash/history
+#1643647939
+rm -rf corpi/scrape/bash/history
+#1643647941
+cp .bash_eternal_history corpi/scrape/bash/history
+#1643647947
+cat corpi/scrape/bash/history
+#1643647963
+perl -ne 'print' corpi/scrape/bash/history
+#1643647998
+perl -ne 'print $.' corpi/scrape/bash/history
+#1643648001
+perl -ne 'print $.' corpi/scrape/bash/history
+#1643648004
+perl -ne 'print $.\n' corpi/scrape/bash/history
+#1643648011
+perl -ne 'print "$.\n"' corpi/scrape/bash/history
+#1643648022
+ln corpi/scrape/bash/history
+#1643648027
+ls
+#1643648036
+rm history 
+#1643648071
+lnum
+#1643648119
+cat code/google-thing/
+#1643648132
+cat code/pier-ex/
+#1643648141
+cat code/pier-ex/tst
+#1643648145
+nl
+#1643648156
+nl
+#1643648170
+cd corpi/
+#1643648170
+ls
+#1643648174
+cd scrape/bash/hi
+#1643648175
+cd scrape/bash/
+#1643648176
+ls
+#1643648178
+cat history 
+#1643648181
+nl history 
+#1643648183
+nl -v 0 history 
+#1643648202
+perl -ne history 
+#1643648208
+perl -ne print history 
+#1643648231
+perl -ne '$. % 2 == 0 && print "$."' history 
+#1643648238
+perl -ne '$. % 2 == 0 && print' history 
+#1643648251
+perl -ne '$. % 2 == 0 && print' history > history2
+#1643648255
+cat history2 history
+#1643648257
+rm history2
+#1643648257
+ls
+#1643648259
+cat history 
+#1643648270
+perl -ne '$. % 2 == 0' history > history2
+#1643648274
+perl -ne '$. % 2 == 0' history 
+#1643648281
+perl -ne '$. % 2 == 0 && print' history 
+#1643648307
+perl -ne '$. % 2 == 0 && print' ~/.eternal_bash_history
+#1643648320
+perl -ne '$. % 2 == 0 && print' ~/.bash_eternal_history 
+#1643648347
+perl -ne '$. % 2 == 0 && print' ~/.bash_eternal_history > ~/corpi/bash/tmp
+#1643648358
+touch tmp
+#1643648358
+perl -ne '$. % 2 == 0 && print' ~/.bash_eternal_history > ~/corpi/bash/tmp
+#1643648366
+perl -ne '$. % 2 == 0 && print' ~/.bash_eternal_history > ~/corpi/scrape/bash/tmp
+#1643648386
+diff ~/corpi/scrape/bash/tmp ~/corpi/scrape/bash/history
+#1643648439
+perl -ne '$. % 2 == 0 && print' ~/.bash_eternal_history > tmp
+#1643648470
+perl -ne '$. % 2 == 0 && print' ~/.bash_eternal_history > tmp
+#1643648481
+wc -l tmp
+#1643648493
+wc -l tmp | awk '{print $1}'
+#1643648500
+ls
+#1643648504
+cd ..
+#1643648504
+ls
+#1643648507
+cd ..
+#1643648507
+ls
+#1643648508
+cd bin/
+#1643648509
+ls
+#1643648509
+ls
+#1643648516
+nvim 0.scrape-local-history
+#1643648518
+nvim 0.scrape-local-history
+#1643648528
+nvim 0.scrape-local-bash-history
+#1643650189
+ls
+#1643650200
+nvim 0.scrape-local-bash-history 
+#1643650203
+nvim 0.scrape-local-bash-history 
+#1643650309
+rm 0.scrape-local-bash-history 
+#1643650310
+ls
+#1643650312
+rm 2
+#1643650313
+ls
+#1643650320
+rm -rf Project-Euler-solutions/
+#1643650322
+ls
+#1643650323
+cd sc/
+#1643650323
+ls
+#1643650324
+cd ..
+#1643650325
+ls
+#1643650326
+cd old/
+#1643650326
+ls
+#1643650327
+cd ..
+#1643650327
+cd ..
+#1643650328
+ls
+#1643650331
+cd scrape/
+#1643650331
+ls
+#1643650337
+cd bash/
+#1643650337
+ls
+#1643650343
+rm history2 
+#1643650343
+ls
+#1643650345
+rm tmp 
+#1643650345
+ls
+#1643650380
+mv history history-1
+#1643650383
+rm history-1 
+#1643650384
+cp ~

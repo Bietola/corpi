@@ -1,14 +1,24 @@
-OLD_RECS='12 16 17 19 21 22 23 24 25 26 27'
+# OLD_RECS='12 16 17 19 21 22 23 24 25 26 27' # Maybe too much vim recordings?
 NEW_RECS='30 31 32 33 34 35 36 37 44 45 46 47'
-RECS="$OLD_RECS $NEW_RECS"
+VIM_RECS="$OLD_RECS $NEW_RECS"
 
 {
+
+    # TODO: Cache these
+    printf >&2 'Generating vim sequences\n'
+    ./recs -n $VIM_RECS |\
+        ./1.proc-rec |\
+        ./2.extract-vim
+
+    # TODO: Cache this
+    printf >&2 'Writing pure apl code\n'
+    find ../scrape/apl/aoc2020apl/ -name *.dyalog | /sul/largs cat
 
     printf >&2 'Interpolating vim\n'
     ./3.intersperse-vim \
         -v <({
                 printf >&2 'Extracting vim\n'
-                ./recs -n $RECS |\
+                ./recs -n $VIM_RECS |\
                     ./1.proc-rec |\
                     ./2.extract-vim
                 printf >&2 'Done w extracting\n'
@@ -27,7 +37,7 @@ RECS="$OLD_RECS $NEW_RECS"
                 # TODO: Convert this to some local python files when using them
                 # Arrows were used extensively in ghci non-vim mode in this age... which should not be the case,
                 # hence the perl sub
-                # ./recs -n $RECS |\
+                # ./recs -n $VIM_RECS |\
                 #     perl -pe 's/(<lft>|<rgt>|<up>|<dwn>)//g' |\
                 #     ./1.proc-rec
 
