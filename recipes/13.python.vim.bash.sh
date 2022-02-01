@@ -51,7 +51,7 @@
     ./0.get-sk-history 30 37
     ## Euler
     ./0.get-sk-history 44 47 # Euler 11
-    ./0.get-sk-history 49 50 # Shell
+    ./0.get-sk-history 49 51 # Shell
 
     # Add top 1000 stack overflow python answers for easy searching
     cat ../scrape/stack-exchange-queries/top1000-python-answers.csv
