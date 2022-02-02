@@ -4,7 +4,7 @@ ROOT="/home/dincio/corpi"
 bin="$ROOT/bin"
 
 usage() {
-    echo "Usage: cook <tags-find recipes [...]> [--] [-f/--force] [-c/--cache] [-v]"
+    echo "Usage: cook <tags-find recipes [...]> [--] [-f/--force] [-c/--cache] [-v] [-w]"
     $bin/tags-find --help
 
     exit 1
@@ -38,6 +38,7 @@ shift $(printf "%s" "$TAG_ARGS" | wc -w)
 DO_CACHE=false
 FORCE=false
 VERBOSE=0
+WRITE_TO_DASHER_CONFIG=false
 while [ -n "$(printf "%s\n" $1 | grep ^-)" -a ! "$1" == "--" ]; do case $1 in
     -v | --verbose )
         shift
@@ -50,6 +51,10 @@ while [ -n "$(printf "%s\n" $1 | grep ^-)" -a ! "$1" == "--" ]; do case $1 in
     -f | --force )
         shift
         FORCE=true
+        ;;
+    -w | --write )
+        shift
+        WRITE_TO_DASHER_CONFIG=true
         ;;
     *)
         printf "Unknown flag: $1\n"
@@ -79,6 +84,22 @@ if $DO_CACHE; then
 
     printf "%s\n" "$RES" > "$CORPUS_PATH"
     printf "LOG: Written to $CORPUS_PATH\n" >& 2
+fi
+
+if $WRITE_TO_DASHER_CONFIG; then
+    (
+        cd ~/.dasher
+        DASHER_CONFIG_FILE="$(
+            ls . | fzf --prompt='Pick dasher config to write to> '
+        )"
+        if [ -z $DASHER_CONFIG_FILE ]; then
+            printf >&2 "Write aborted\n"
+            exit 1
+        fi
+        cp "$DASHER_CONFIG_FILE" "$DASHER_CONFIG_FILE.bu"
+        printf "%s\n" "$RES" > "$DASHER_CONFIG_FILE"
+    )
+    printf >&2 "Done writing config\n"
 fi
 
 cd - >/dev/null
